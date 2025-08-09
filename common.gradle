@@ -1,12 +1,11 @@
 apply plugin: 'maven-publish'
-apply plugin: 'dev.architectury.loom'
+apply plugin: 'fabric-loom'
 apply plugin: 'com.replaymod.preprocess'
 apply plugin: 'me.fallenbreath.yamlang'
 apply plugin: 'io.github.goooler.shadow'
 apply plugin: 'com.modrinth.minotaur'
 
-def mod_brand = project.name.endsWith("-common") ? 'common' : (loom.platform.get() as String).toLowerCase()
-assert mod_brand in ['fabric', 'forge', 'neoforge', 'common']
+def mod_brand = "fabric"
 archivesBaseName = (project.archives_base_name == null ? rootProject.archives_base_name : project.archives_base_name) + "-" + mod_brand
 group = rootProject.maven_group
 
@@ -46,8 +45,8 @@ loom {
     }
 }
 remapJar {
-    remapperIsolation = true
-    injectAccessWidener = true
+//    remapperIsolation = true
+//    injectAccessWidener = true
 }
 
 configurations {
@@ -82,7 +81,7 @@ dependencies {
         modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
         modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-        modImplementation "ru.kelcuprum.alinlib:AlinLib-fabric:${rootProject.alinlib}+mc${project.alinlib_minecraft_version == null ? project.minecraft_version : project.alinlib_minecraft_version}"
+        modImplementation "ru.kelcuprum:AlinLib-fabric:${rootProject.alinlib}+mc${project.alinlib_minecraft_version == null ? project.minecraft_version : project.alinlib_minecraft_version}"
     }
 
 

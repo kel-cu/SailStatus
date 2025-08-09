@@ -8,7 +8,11 @@ public class Client {
     public static int getState(){
         if(AlinLib.MINECRAFT.getOverlay() instanceof LoadingOverlay) return 1;
         else if (AlinLib.MINECRAFT.screen instanceof LevelLoadingScreen) return 2;
-        else if (AlinLib.MINECRAFT.screen instanceof ProgressScreen || AlinLib.MINECRAFT.screen instanceof ConnectScreen || AlinLib.MINECRAFT.screen instanceof ReceivingLevelScreen) return 3;
+        else if (AlinLib.MINECRAFT.screen instanceof ProgressScreen || AlinLib.MINECRAFT.screen instanceof ConnectScreen
+                //#if MC > 12109
+                //$$ || AlinLib.MINECRAFT.screen instanceof ReceivingLevelScreen
+                //#endif
+        ) return 3;
         else if (AlinLib.MINECRAFT.screen instanceof DisconnectedScreen) return 4;
         else if (AlinLib.MINECRAFT.screen instanceof GenericMessageScreen) return 5;
         else return 0;
