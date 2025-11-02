@@ -4,11 +4,12 @@ import com.jagrosh.discordipc.entities.*;
 import ru.kelcuprum.sailstatus.SailStatus;
 import ru.kelcuprum.sailstatus.config.Assets;
 
+import static ru.kelcuprum.sailstatus.SailStatus.defaultBuilder;
+
 public class MainMenu {
-    public MainMenu(){
-        RichPresence.Builder presence = new RichPresence.Builder();
-        presence.setActivityType(ActivityType.Playing);
-        presence.setLargeImage(Assets.getSelected().getIcon("logo"), SailStatus.localization.getLocalization("mainmenu.icon", true));
+    public static void execute() {
+        RichPresence.Builder presence = defaultBuilder();
+        presence.setLargeImage(Assets.getSelected().getIcon("logo"), SailStatus.localization.getLocalization("mainmenu.icon", true), "");
         if(SailStatus.localization.getLocalization("mainmenu", false).equals("sailstatus.presence.mainmenu")) presence.setState("Resources unready!");
         else  {
             presence.setDetails(SailStatus.localization.getLocalization("mainmenu", true));

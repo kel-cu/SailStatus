@@ -12,7 +12,7 @@ public class PreLaunchSailStatus implements PreLaunchEntrypoint {
         checkFolders();
     }
     public static void checkFolders(){
-        File file = new File("config/SailStatus");
+        File file = new File("config/SimplyStatus");
         File file1 = new File("config/SailStatus");
         if(file.exists() && !file1.exists())
             if(file.renameTo(file1)) logger.log("The configs have been moved");

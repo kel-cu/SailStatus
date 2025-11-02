@@ -163,7 +163,7 @@ public class SailStatus implements ClientModInitializer {
                     }
                 }
             }
-        }, 250, 250);
+        }, 1000, 1000);
     }
 
     // -=-=-=-=-=-=-=-=-
@@ -244,30 +244,51 @@ public class SailStatus implements ClientModInitializer {
             }
         });
     }
+    // -=-=-=- Custom mods -=-=-=-
+    public static HashMap<AbstractPresence.TYPES, ArrayList<AbstractPresence>> modsPresences = new HashMap<>();
+    public static void registerModPresence(AbstractPresence abstractPresence){
+        ArrayList<AbstractPresence> arrayList = modsPresences.getOrDefault(abstractPresence.type, new ArrayList<>());
+        arrayList.add(abstractPresence);
+        modsPresences.put(abstractPresence.type, arrayList);
+    }
+    public static boolean executableModsPresenceType(AbstractPresence.TYPES type){
+        if(modsPresences.containsKey(type)){
+            for(AbstractPresence abstractPresence : modsPresences.get(type)){
+                if(abstractPresence.avaliable()) {
+                    abstractPresence.execute();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    // -=-=-=-
 
     private static void updatePresence() {
         if (userConfig.getBoolean("SHOW_RPC", true)) {
             if(waterPlayer) waterPlayerSupport.update();
             if (AlinLib.MINECRAFT.level != null && AlinLib.MINECRAFT.player != null) {
-                if (SailStatus.replayMod && ReplayModComp.isInReplay() && userConfig.getBoolean("VIEW_REPLAY_MOD", true)) new ReplayMod();
-                else if (SailStatus.klashback && FlashbackComp.isInReplay() && userConfig.getBoolean("VIEW_REPLAY_MOD", true)) new Flashback();
-                else if (AlinLib.MINECRAFT.isSingleplayer() || AlinLib.MINECRAFT.hasSingleplayerServer()) new SinglePlayer();
-                else if (AlinLib.MINECRAFT.getCurrentServer() != null) new MultiPlayer();
+                if(executableModsPresenceType(AbstractPresence.TYPES.IN_GAME)) return;
+                if (SailStatus.replayMod && ReplayModComp.isInReplay() && userConfig.getBoolean("VIEW_REPLAY_MOD", true)) ReplayMod.execute();
+                else if (SailStatus.klashback && FlashbackComp.isInReplay() && userConfig.getBoolean("VIEW_REPLAY_MOD", true)) Flashback.execute();
+                else if (AlinLib.MINECRAFT.isSingleplayer() || AlinLib.MINECRAFT.hasSingleplayerServer()) SinglePlayer.execute();
+                else if (AlinLib.MINECRAFT.getCurrentServer() != null) MultiPlayer.execute();
                 else switch (Client.getState()) {
-                        case 1 -> new LoadingResources();
-                        case 2 -> new Loading();
-                        case 3 -> new Connect();
-                        case 4 -> new Disconnect();
-                        case 5 -> new SaveWorld();
-                        default -> new Unknown();
+                        case 1 -> LoadingResources.execute();
+                        case 2 -> Loading.execute();
+                        case 3 -> Connect.execute();
+                        case 4 -> Disconnect.execute();
+                        case 5 -> SaveWorld.execute();
+                        default -> Unknown.execute();
                     }
             } else {
+                if(executableModsPresenceType(AbstractPresence.TYPES.MENU)) return;
                 switch (Client.getState()) {
-                    case 1 -> new LoadingResources();
-                    case 2 -> new Loading();
-                    case 3 -> new Connect();
-                    case 4 -> new Disconnect();
-                    default -> new MainMenu();
+                    case 1 -> LoadingResources.execute();
+                    case 2 -> Loading.execute();
+                    case 3 -> Connect.execute();
+                    case 4 -> Disconnect.execute();
+                    default -> MainMenu.execute();
                 }
             }
         } else sendPresence(null);
@@ -287,13 +308,13 @@ public class SailStatus implements ClientModInitializer {
         if (userConfig.getBoolean("VIEW_VOICE_SPEAK", false) && (isVoiceModsEnable && new Voice().isSpeak)) {
             Voice mod = new Voice();
             String info = mod.isSelfTalk ? localization.getLocalization("mod.voice", false) : mod.isOnePlayer ? localization.getLocalization("mod.voice.one", false) : localization.getLocalization("mod.voice.more", false);
-            presence.setSmallImage(Assets.getSelected().getIcon("voice"), localization.getParsedText(info));
+            presence.setSmallImage(Assets.getSelected().getIcon("voice"), localization.getParsedText(info), "");
         } else if (userConfig.getBoolean("VIEW_MUSIC_LISTENER", false) && (isMusicModsEnable && !waterPlayerSupport.paused) && !isMenu) {
-            presence.setSmallImage(Assets.getSelected().getIcon("music"), localization.getLocalization(waterPlayerSupport.artistIsNull ? "mod.music.noauthor" : "mod.music", true));
+            presence.setSmallImage(Assets.getSelected().getIcon("music"), localization.getLocalization(waterPlayerSupport.artistIsNull ? "mod.music.noauthor" : "mod.music", true), "");
         } else if (isServer && (serverConfig.getBoolean("SHOW_ICON", false) && (!serverConfig.getString("ICON_URL", "").isEmpty()))) {
-            presence.setSmallImage(serverConfig.getString("ICON_URL", "").replace("%address%", Objects.requireNonNull(AlinLib.MINECRAFT.getCurrentServer()).ip), localization.getParsedText("{player.scene}"));
+            presence.setSmallImage(serverConfig.getString("ICON_URL", "").replace("%address%", Objects.requireNonNull(AlinLib.MINECRAFT.getCurrentServer()).ip), localization.getParsedText("{player.scene}"), "");
         } else if (userConfig.getBoolean("SHOW_AVATAR_PLAYER", true)) {
-            presence.setSmallImage(PresencePlayer.getURLAvatar(), PresencePlayer.getName());
+            presence.setSmallImage(PresencePlayer.getURLAvatar(), PresencePlayer.getName(), "");
         }
 
         if (SailStatus.userConfig.getBoolean("BUTTON.ENABLE", false)) {
@@ -306,6 +327,9 @@ public class SailStatus implements ClientModInitializer {
             }
             presence.setButtons(buttons);
         }
+    }
+    public static RichPresence.Builder defaultBuilder(){
+        return new RichPresence.Builder().setActivityType(ActivityType.Playing).setStatusDisplayType(StatusDisplayType.Name);
     }
 
 

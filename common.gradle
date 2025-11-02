@@ -66,7 +66,7 @@ dependencies {
     // Требующие библиотеки
     shade(implementation("com.kohlschutter.junixsocket:junixsocket-common:2.7.0"))
     shade(implementation("com.kohlschutter.junixsocket:junixsocket-native-common:2.7.0"))
-    shade(implementation("io.github.CDAGaming:DiscordIPC:0.10.0"))
+    shade(implementation("io.github.cdagaming:DiscordIPC:0.11.0"))
 
     // Поддержка модов
     modCompileOnly "maven.modrinth:replaymod:${project.replaymod}"

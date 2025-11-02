@@ -9,8 +9,9 @@ public class ReplayMod {
      * Состояние: В главном меню<br>
      * Причины: Игрок находится в главном меню; Игрок в ReplayMod сцене и параметр скрыт
      */
-    public ReplayMod() {
+    public static void execute() {
         RichPresence.Builder presence = new RichPresence.Builder()
+                .setStatusDisplayType(StatusDisplayType.Name)
                 .setActivityType(ActivityType.Watching)
                 .setDetails(SailStatus.localization.getLocalization("mod.replaymod", true))
                 .setState(SailStatus.localization.getLocalization("mod.replaymod.state", true))

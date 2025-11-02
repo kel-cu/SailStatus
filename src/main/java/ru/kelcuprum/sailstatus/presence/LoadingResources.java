@@ -5,13 +5,15 @@ import ru.kelcuprum.alinlib.AlinLib;
 import ru.kelcuprum.sailstatus.SailStatus;
 import ru.kelcuprum.sailstatus.config.Assets;
 
+import static ru.kelcuprum.sailstatus.SailStatus.defaultBuilder;
+
 public class LoadingResources {
     /**
      * Состояние: <br>
      * Причины:
      */
-    public LoadingResources(){
-        RichPresence.Builder presence = new RichPresence.Builder().setActivityType(ActivityType.Playing);
+    public static void execute(){
+        RichPresence.Builder presence = defaultBuilder();
         presence.setDetails(SailStatus.localization.getLocalization("loading", true));
         presence.setLargeImage(Assets.getSelected().getIcon("unknown"));
         if(AlinLib.isAprilFool()){
